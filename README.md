@@ -1,5 +1,10 @@
 # İHA Görüntülerinde Küçük Nesne Tespiti ve Doğal Dilde Özetleme
-Bu proje, İHA (İHA/Drone) tarafından alınan elektro-optik (EO) ve termal görüntülerdeki küçük nesnelerin (insan, araç vb.) derin öğrenme mimarileriyle tespit edilmesini ve tespit sonuçlarının doğal dilde anlamlı özetler haline getirilmesini kapsar.
+
+Bu proje; İHA tarafından alınan elektro-optik (EO) ve termal görüntülerdeki küçük nesnelerin (insan, araç, drone vb.) derin öğrenme mimarileriyle tespit edilmesini, SAHI dilimleme yaklaşımıyla küçük hedef başarımının artırılmasını ve tespit sonuçlarının kural tabanlı bir raporlama modülüyle doğal dil durum özetlerine dönüştürülmesini kapsar.
+
+## Sistem Akış Şeması
+
+```mermaid
 graph TD
     A[GİRDİ: Termal İHA Görseli] --> B[Görüntü Ön İşleme & SAHI Dilimleme]
     B --> C[YOLOv8n Çıkarım Motoru]
