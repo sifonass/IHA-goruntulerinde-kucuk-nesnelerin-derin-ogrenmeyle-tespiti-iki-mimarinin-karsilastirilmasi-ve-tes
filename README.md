@@ -1,2 +1,1 @@
-# Small Object Detection and Natural Language Summarization in UAV Imagery
-Bu proje, İHA (İHA/Drone) tarafından alınan elektro-optik (EO) ve termal görüntülerdeki küçük nesnelerin (insan, araç, bina vb.) derin öğrenme mimarileriyle tespit edilmesini ve tespit sonuçlarının doğal dilde anlamlı özetler haline getirilmesini kapsar.
+# Bu proje, İHA (İHA/Drone) tarafından alınan elektro-optik (EO) ve termal görüntülerdeki küçük nesnelerin (insan, araç, bina vb.) derin öğrenme mimarileriyle tespit edilmesini ve tespit sonuçlarının doğal dilde anlamlı özetler haline getirilmesini kapsar.
