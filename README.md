@@ -1,22 +1,25 @@
-# İHA Görüntülerinde Küçük Nesne Tespiti ve Doğal Dilde Özetleme
+# Elektro-Optik ve Termal İHA Görüntülerinde Küçük Hedeflerin Derin Öğrenme ile Tespiti ve Doğal Dilde Raporlanması
 
-Bu proje; İHA tarafından alınan elektro-optik (EO) ve termal görüntülerdeki küçük nesnelerin (insan, araç, drone vb.) derin öğrenme mimarileriyle tespit edilmesini, SAHI dilimleme yaklaşımıyla küçük hedef başarımının artırılmasını ve tespit sonuçlarının kural tabanlı bir raporlama modülüyle doğal dil durum özetlerine dönüştürülmesini kapsar.
+Bu proje; İnsansız Hava Araçlarından (İHA) alınan elektro-optik (EO) ve termal görüntülerde küçük hedeflerin tespit edilmesini, sınıflandırılmasını ve elde edilen sonuçların operasyonel durum raporu olarak doğal dilde sunulmasını amaçlamaktadır.
 
-## Sistem Akış Şeması
+---
+
+## Sistem Mimarisi ve İş Akışı
 
 ```mermaid
 graph TD
-    A[GİRDİ: Termal İHA Görseli] --> B[Görüntü Ön İşleme & SAHI Dilimleme]
-    B --> C[YOLOv8n Çıkarım Motoru]
-    C --> D[Tespit Nesneleri & Bounding Box]
-    D --> E[Kural Tabanlı Doğal Dil Raporlama Modülü]
-    E --> F[ÇIKTI 1: Etiketli Görsel Çıktı]
-    E --> G[ÇIKTI 2: Doğal Dil Görev Durum Raporu]
+    A[Girdi: EO/Termal Video ve Görüntü] --> B[Ön İşleme ve SAHI Görsel Dilimleme]
+    B --> C[Nesne Tespiti: YOLO Modeli]
+    C --> D[NMS ve Koordinat Birleştirme]
+    D --> E[Semantik Çıkarım ve Rapor Motoru]
+    E --> F[Çıktı: İşaretlenmiş Görüntü ve Doğal Dil Raporu]
+```
 
+---
 
 ## 1. Veri Seti ve Kümeler
 
-Aşağıdaki tabloda birleştirilmiş İHA veri setinin (`merged_uav_dataset`) train, val ve test kümelerine göre görüntü ve etiket dağılımları yer almaktadır:
+Aşağıdaki tabloda birleştirilmiş İHA veri setinin (`merged_uav_dataset`) `train`, `val` ve `test` kümelerine göre görüntü ve etiket dağılımları yer almaktadır:
 
 | Küme (Split) | Görüntü Sayısı | Etiket (.txt) Sayısı | Toplam Kutu (Instances) | Küçük Kutu (<32x32 px) | Genel Küçük Oranı (%) |
 | :--- | :---: | :---: | :---: | :---: | :---: |
@@ -33,7 +36,7 @@ Veri setindeki sızıntı durumunu tespit etmek amacıyla gerçekleştirilen MD5
 * **Birebir Aynı (MD5) Görüntü Çiftleri:** Toplam **2** adet sızıntı tespit edilmiştir (Örn: `03_llvip__040230__61896b05c9.png` <==> `03_llvip__040179__63ad052405.png`).
 * **Çok Benzer (dHash $\le$ 5) Görüntü Çiftleri:** Toplam **453.198** adet yakınlık/çakışma tespit edilmiştir.
 
-> **Önemli Not:** Yüksek miktardaki dHash yakınlığı, video dizisi bazlı (sequence-based) bölme yapılmadığını ve ardışık kare sızıntısı olduğunu göstermektedir. Adil ve güvenilir bir akademik değerlendirme için kümelerin uçuş/dizi ID'sine göre yeniden ayrılması gerekmektedir.
+> **Önemli Not:** Yüksek miktardaki dHash yakınlığı, video dizisi bazlı (sequence-based) bölme yapılmadığını ve ardışık kare sızıntısı olduğunu göstermektedir. Adil ve akademik olarak güvenilir bir değerlendirme için kümelerin uçuş/dizi ID'sine göre yeniden ayrılması gerekmektedir.
 
 ---
 
@@ -68,7 +71,7 @@ Modelin `TEST` kümesi üzerindeki değerlendirme sonuçları aşağıda tablola
 Nesne tespit modelinden alınan ham çıktıları operatör dostu Türkçe durum raporuna dönüştüren modüldür.
 
 * **Kodun Bulunduğu Dosya:** `report_generator.py`
-* **Girdi Formatı:** Sınıf adları ve tespit adedi içeren tespit listesi (Örn: `{'person': 2, 'car': 1}`)
+* **Girdi Formatı:** Sınıf adları ve tespit adedi içeren tespit listesi (Örn: `['person', 'person', 'car']`)
 * **Çıktı Formatı:** Doğal dilde rapor cümlesi (Örn: `"Gözlem sahasında 2 adet person ve 1 adet car tespit edilmiştir."`)
 
 ---
@@ -76,4 +79,4 @@ Nesne tespit modelinden alınan ham çıktıları operatör dostu Türkçe durum
 ## 5. Sıradaki Adım
 
 1. Veri setindeki sızıntıları önlemek amacıyla kareleri uçuş/video bazlı (sequence ID) olarak yeniden `train/val/test` kümelerine ayırmak.
-2. Temizlenmiş veri kümesi üzerinde **ikinci nesne tespit mimarisini** (örneğin DETR veya RT-DETR) aynı test kümesinde eğitip performansını mevcut YOLO mimarisi ile kıyaslamak.
+2. Temizlenmiş veri kümesi üzerinde **ikinci nesne tespit mimarisini** (örneğin RT-DETR veya DETR varyantı) aynı test kümesinde eğitip performansını mevcut YOLO mimarisi ile kıyaslamak.
