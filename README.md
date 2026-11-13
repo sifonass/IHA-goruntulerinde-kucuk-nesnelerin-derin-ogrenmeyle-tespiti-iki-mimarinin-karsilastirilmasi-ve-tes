@@ -132,26 +132,27 @@ Nesne tespit modellerinden alınan ham çıktıları operatör dostu Türkçe du
 
 | Örnek | Tespit Görseli (YOLOv8) | Doğal Dil Durum Raporu |
 | :---: | :---: | :--- |
-| **01** | ![01](ornek_ciktilar_yolo/01_02_hituav__1_60_30_0_00090__3f55603120.jpg) | Gözlem sahasında 6 adet person tespit edilmiştir. |
-| **02** | ![02](ornek_ciktilar_yolo/02_03_llvip__120179__b620d3d0ed.jpg) | Gözlem sahasında 4 adet car ve 1 adet person tespit edilmiştir. |
-| **03** | ![03](ornek_ciktilar_yolo/03_03_llvip__120274__b933da4a1f.jpg) | Gözlem sahasında 4 adet car ve 2 adet person tespit edilmiştir. |
-| **04** | ![04](ornek_ciktilar_yolo/04_03_llvip__120326__c7a24636dd.jpg) | Gözlem sahasında 3 adet car ve 2 adet person tespit edilmiştir. |
-| **05** | ![05](ornek_ciktilar_yolo/05_01_uav2uav__01724__218eff6b90.jpg) | Gözlem sahasında 1 adet drone tespit edilmiştir. |
-| **06** | ![06](ornek_ciktilar_yolo/06_01_uav2uav__02006__50ed4e02dd.jpg) | Gözlem sahasında 1 adet drone tespit edilmiştir. |
-| **07** | ![07](ornek_ciktilar_yolo/07_01_uav2uav__02202__c5c7f0f51b.jpg) | Gözlem sahasında 3 adet drone tespit edilmiştir. |
-| **08** | ![08](ornek_ciktilar_yolo/08_01_uav2uav__02243__badce0a7db.jpg) | Gözlem sahasında 2 adet drone tespit edilmiştir. |
-| **09** | ![09](ornek_ciktilar_yolo/09_01_uav2uav__02244__b8378f0b59.jpg) | Gözlem sahasında 2 adet drone tespit edilmiştir. |
-| **10** | ![10](ornek_ciktilar_yolo/10_01_uav2uav__974__8abc3be555.jpg) | Gözlem sahasında 2 adet drone tespit edilmiştir. |
-| **11** | ![11](ornek_ciktilar_yolo/11_02_hituav__0_60_40_0_01660__9ec44a4a6c.jpg) | Gözlem sahasında 17 adet person tespit edilmiştir. |
-| **12** | ![12](ornek_ciktilar_yolo/12_02_hituav__1_130_60_0_03936__bd07342887.jpg) | Gözlem sahasında 10 adet person tespit edilmiştir. |
-| **13** | ![13](ornek_ciktilar_yolo/13_02_hituav__1_60_60_0_00531__c40fdff772.jpg) | Gözlem sahasında 4 adet person tespit edilmiştir. |
-| **14** | ![14](ornek_ciktilar_yolo/14_03_llvip__060108__2ae70a5c94.jpg) | Gözlem sahasında 3 adet person tespit edilmiştir. |
-| **15** | ![15](ornek_ciktilar_yolo/15_03_llvip__060290__5e24138524.jpg) | Gözlem sahasında 1 adet person tespit edilmiştir. |
-| **16** | ![16](ornek_ciktilar_yolo/16_03_llvip__060380__775feba7a4.jpg) | Gözlem sahasında 1 adet person tespit edilmiştir. |
-| **17** | ![17](ornek_ciktilar_yolo/17_03_llvip__240352__1e8fc2e778.jpg) | Gözlem sahasında 4 adet person tespit edilmiştir. |
-| **18** | ![18](ornek_ciktilar_yolo/18_03_llvip__260510__f3e898ac80.jpg) | Gözlem sahasında 2 adet person tespit edilmiştir. |
-| **19** | ![19](ornek_ciktilar_yolo/19_04_mixdataset__002359__52d81915ee.jpg) | Gözlem sahasında 2 adet person tespit edilmiştir. |
-| **20** | ![20](ornek_ciktilar_yolo/20_02_hituav__1_60_50_0_00394__18b8ed41d8.jpg) | Gözlem sahasında 5 adet person tespit edilmiştir. |
+| **01** | ![01](ornek_ciktilar_yolov8/01_02_hituav__1_60_30_0_00090__3f55603120.jpg) | Gözlem sahasında 6 adet person tespit edilmiştir. |
+| **02** | ![02](ornek_ciktilar_yolov8/02_03_llvip__120179__b620d3d0ed.jpg) | Gözlem sahasında 4 adet car ve 1 adet person tespit edilmiştir. |
+| **03** | ![03](ornek_ciktilar_yolov8/03_03_llvip__120274__b933da4a1f.jpg) | Gözlem sahasında 4 adet car ve 2 adet person tespit edilmiştir. |
+| **04** | ![04](ornek_ciktilar_yolov8/04_03_llvip__120326__c7a24636dd.jpg) | Gözlem sahasında 3 adet car ve 2 adet person tespit edilmiştir. |
+| **05** | ![05](ornek_ciktilar_yolov8/05_01_uav2uav__01724__218eff6b90.jpg) | Gözlem sahasında 1 adet drone tespit edilmiştir. |
+| **06** | ![06](ornek_ciktilar_yolov8/06_01_uav2uav__02006__50ed4e02dd.jpg) | Gözlem sahasında 1 adet drone tespit edilmiştir. |
+| **07** | ![07](ornek_ciktilar_yolov8/07_01_uav2uav__02202__c5c7f0f51b.jpg) | Gözlem sahasında 3 adet drone tespit edilmiştir. |
+| **08** | ![08](ornek_ciktilar_yolov8/08_01_uav2uav__02243__badce0a7db.jpg) | Gözlem sahasında 2 adet drone tespit edilmiştir. |
+| **09** | ![09](ornek_ciktilar_yolov8/09_01_uav2uav__02244__b8378f0b59.jpg) | Gözlem sahasında 2 adet drone tespit edilmiştir. |
+| **10** | ![10](ornek_ciktilar_yolov8/10_01_uav2uav__974__8abc3be555.jpg) | Gözlem sahasında 2 adet drone tespit edilmiştir. |
+| **11** | ![11](ornek_ciktilar_yolov8/11_02_hituav__0_60_40_0_01660__9ec44a4a6c.jpg) | Gözlem sahasında 17 adet person tespit edilmiştir. |
+| **12** | ![12](ornek_ciktilar_yolov8/12_02_hituav__1_130_60_0_03936__bd07342887.jpg) | Gözlem sahasında 10 adet person tespit edilmiştir. |
+| **13** | ![13](ornek_ciktilar_yolov8/13_02_hituav__1_60_60_0_00531__c40fdff772.jpg) | Gözlem sahasında 4 adet person tespit edilmiştir. |
+| **14** | ![14](ornek_ciktilar_yolov8/14_03_llvip__060108__2ae70a5c94.jpg) | Gözlem sahasında 3 adet person tespit edilmiştir. |
+| **15** | ![15](ornek_ciktilar_yolov8/15_03_llvip__060290__5e24138524.jpg) | Gözlem sahasında 1 adet person tespit edilmiştir. |
+| **16** | ![16](ornek_ciktilar_yolov8/16_03_llvip__060380__775feba7a4.jpg) | Gözlem sahasında 1 adet person tespit edilmiştir. |
+| **17** | ![17](ornek_ciktilar_yolov8/17_03_llvip__240352__1e8fc2e778.jpg) | Gözlem sahasında 4 adet person tespit edilmiştir. |
+| **18** | ![18](ornek_ciktilar_yolov8/18_03_llvip__260510__f3e898ac80.jpg) | Gözlem sahasında 2 adet person tespit edilmiştir. |
+| **19** | ![19](ornek_ciktilar_yolov8/19_04_mixdataset__002359__52d81915ee.jpg) | Gözlem sahasında 2 adet person tespit edilmiştir. |
+| **20** | ![20](ornek_ciktilar_yolov8/20_02_hituav__1_60_50_0_00394__18b8ed41d8.jpg) | Gözlem sahasında 5 adet person tespit edilmiştir. |
+
 ---
 
 ### 4.2. RT-DETR Test Sonuçları
