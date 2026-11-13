@@ -19,56 +19,58 @@ graph TD
 
 ## 1. Veri Seti ve Kümeler
 
-Aşağıdaki tabloda birleştirilmiş İHA veri setinin (`merged_uav_dataset`) `train`, `val` ve `test` kümelerine göre görüntü ve etiket dağılımları yer almaktadır:
+Aşağıdaki tabloda, kümeler arası veri sızıntısını (data leakage) önlemek amacıyla uçuş/dizi (sequence) bazlı olarak yeniden ayrılan birleştirilmiş İHA veri setinin (`merged_uav_dataset`) **test** kümesine ait görüntü ve etiket dağılımları yer almaktadır[cite: 2, 3]:
 
 | Küme (Split) | Görüntü Sayısı | Etiket (.txt) Sayısı | Toplam Kutu (Instances) | Küçük Kutu (<32x32 px) | Genel Küçük Oranı (%) |
 | :--- | :---: | :---: | :---: | :---: | :---: |
-| **Train** | 22338 | 22338 | 72583 | 15517 | %21.38 |
-| **Val** | 2789 | 2789 | 9117 | 2182 | %23.93 |
-| **Test** | 2798 | 2798 | 8748 | 1732 | %19.80 |
+| **Train** | *(Güncel sayı)* | *(Güncel sayı)* | *(Güncel sayı)* | *(Güncel sayı)* | *(Güncel oran)* |
+| **Val** | *(Güncel sayı)* | *(Güncel sayı)* | *(Güncel sayı)* | *(Güncel sayı)* | *(Güncel oran)* |
+| **Test** | 2974[cite: 2, 3] | 2974 *(97 arka plan)*[cite: 2] | 9611[cite: 2, 3] | 2295[cite: 3] | %23.88 |
+
+> **Not:** Train ve Val kümelerinin yeni görüntü/kutu sayıları mevcut değilse, GitHub dokümanında yalnızca **Test** satırını bırakabilir veya ilgili hücreleri kendi train/val istatistiklerinle doldurabilirsin.
 
 ---
 
-## 2. Kümeler Arası Veri Sızıntısı (Data Leakage) Kontrolü
+## 2. Kümeler Arası Veri Sızıntısı (Data Leakage) Kontrolü ve Çözümü
 
-Veri setindeki sızıntı durumunu tespit etmek amacıyla gerçekleştirilen MD5 (birebir eşleşme) ve dHash (algısal benzerlik) analizi sonuçları:
+İlk aşamada yapılan MD5 (birebir eşleşme) ve dHash (algısal benzerlik) kontrollerinde tespit edilen sızıntılar giderilmiş ve veri seti yeniden yapılandırılmıştır:
 
-* **Birebir Aynı (MD5) Görüntü Çiftleri:** Toplam **2** adet sızıntı tespit edilmiştir (Örn: `03_llvip__040230__61896b05c9.png` <==> `03_llvip__040179__63ad052405.png`).
-* **Çok Benzer (dHash $\le$ 5) Görüntü Çiftleri:** Toplam **453.198** adet yakınlık/çakışma tespit edilmiştir.
-
-> **Önemli Not:** Yüksek miktardaki dHash yakınlığı, video dizisi bazlı (sequence-based) bölme yapılmadığını ve ardışık kare sızıntısı olduğunu göstermektedir. Adil ve akademik olarak güvenilir bir değerlendirme için kümelerin uçuş/dizi ID'sine göre yeniden ayrılması gerekmektedir.
+* **Önceki Durum:** Kümeler rastgele bölündüğü için 2 adet birebir aynı (MD5) ve 453.198 adet çok benzer (dHash ≤ 5) ardışık video karesi çakışması tespit edilmişti.
+* **Uygulanan Çözüm:** Adil ve akademik olarak güvenilir bir değerlendirme sağlamak amacıyla tüm veri seti uçuş/video dizisi (sequence ID) bazlı olarak yeniden `train`, `val` ve `test` kümelerine ayrılmış; kümeler arası ardışık kare sızıntısı sıfırlanmıştır.
 
 ---
 
-## 3. Test Sonuçları (Küme: TEST)
+## 3. Test Sonuçları (Küme: TEST — Sızıntısız)
 
-Modelin `TEST` kümesi üzerindeki değerlendirme sonuçları aşağıda tablolanmıştır.
+Sızıntılardan arındırılmış **2974 görüntülük** (`9611` nesne)[cite: 2, 3] güncel **TEST** kümesi üzerindeki değerlendirme sonuçları aşağıda tablolanmıştır:
 
 ### Genel ve Küçük Nesne Başarım Tablosu
 
 | Metrik | IoU Eşiği / Alan Tanımı | Değer |
 | :--- | :--- | :---: |
-| **mAP@50 (Genel)** | IoU = 0.50 | **0.9366** |
-| **mAP@50-95 (Genel)** | IoU = 0.50:0.95 | **0.7240** |
-| **AP_small (<32x32 px)** | IoU = 0.50:0.95 (COCO area = small) | **0.5550** |
+| **mAP@50 (Genel)** | IoU = 0.50 | **0.8970**[cite: 2, 3] |
+| **mAP@50-95 (Genel)** | IoU = 0.50:0.95 | **0.6221**[cite: 2, 3] |
+| **AP_small@50 (<32x32 px)** | IoU = 0.50 (COCO area = small) | **0.7631**[cite: 3] |
+| **AP_small@50-95 (<32x32 px)** | IoU = 0.50:0.95 (COCO area = small) | **0.4491**[cite: 3] |
 
-### Sınıf Bazlı mAP@50 Tablosu
+### Sınıf Bazlı Başarım Tablosu
 
-| Sınıf ID | Sınıf Adı (Class Name) | Örnek Sayısı (Instances) | mAP@50 |
-| :---: | :--- | :---: | :---: |
-| 0 | person | 5930 | 0.9719 |
-| 1 | car | 1694 | 0.9709 |
-| 2 | bicycle | 378 | 0.8343 |
-| 3 | other_vehicle | 10 | 0.8190 |
-| 4 | drone | 367 | 0.9827 |
-| 5 | mine | 182 | 0.9944 |
-| 6 | gun | 187 | 0.9829 |
+| Sınıf ID | Sınıf Adı (Class Name) | Örnek Sayısı (Instances) | Küçük Nesne Sayısı (<32x32 px) | mAP@50 | mAP@50-95 | AP_small@50-95 |
+| :---: | :--- | :---: | :---: | :---: | :---: | :---: |
+| **0** | `person` | 6605[cite: 2, 3] | 1568[cite: 3] | 0.9677[cite: 3] | 0.662[cite: 2] | 0.5166[cite: 3] |
+| **1** | `car` | 1906[cite: 2, 3] | 44[cite: 3] | 0.9889[cite: 3] | 0.906[cite: 2] | 0.5523[cite: 3] |
+| **2** | `bicycle` | 515[cite: 2, 3] | 350[cite: 3] | 0.8811[cite: 3] | 0.518[cite: 2] | 0.4465[cite: 3] |
+| **3** | `other_vehicle` | 19[cite: 2, 3] | 1[cite: 3] | 0.5917[cite: 3] | 0.357[cite: 2] | 0.0000[cite: 3] |
+| **4** | `drone` | 383[cite: 2, 3] | 253[cite: 3] | 0.9575[cite: 3] | 0.659[cite: 2] | 0.5795[cite: 3] |
+| **5** | `mine` | 183[cite: 2, 3] | 79[cite: 3] | 0.9949[cite: 3] | 0.632[cite: 2] | 0.5999[cite: 3] |
+
+> **Değerlendirme Notu:** Sızıntı öncesi (ardışık kare ezberli) dağılımda %93.66 olan mAP@50 değeri, sızıntılar tamamen temizlendikten sonra gerçek genelleme performansını yansıtarak **%89.70** olarak gerçekleşmiştir[cite: 2, 3]. Ana sınıfların (`person`, `car`, `drone`, `mine`) tamamı %95.7–%99.5 bandında yüksek başarım sergilerken[cite: 2, 3], `other_vehicle` sınıfındaki düşük skor test kümesindeki örnek azlığından ($n=19$) kaynaklanmaktadır[cite: 2, 3].
 
 ---
 
 ## 4. Doğal Dil Raporlama Modülü
 
-Nesne tespit modelinden alınan ham çıktıları operatör dostu Türkçe durum raporuna dönüştüren modüldür.
+Nesne tespit modelinden alınan ham çıktıları operatör dostu Türkçe durum raporuna dönüştüren modüldür:
 
 * **Kodun Bulunduğu Dosya:** `report_generator.py`
 * **Girdi Formatı:** Sınıf adları ve tespit adedi içeren tespit listesi (Örn: `['person', 'person', 'car']`)
@@ -78,5 +80,5 @@ Nesne tespit modelinden alınan ham çıktıları operatör dostu Türkçe durum
 
 ## 5. Sıradaki Adım
 
-1. Veri setindeki sızıntıları önlemek amacıyla kareleri uçuş/video bazlı (sequence ID) olarak yeniden `train/val/test` kümelerine ayırmak.
-2. Temizlenmiş veri kümesi üzerinde **ikinci nesne tespit mimarisini** (örneğin RT-DETR veya DETR varyantı) aynı test kümesinde eğitip performansını mevcut YOLO mimarisi ile kıyaslamak.
+1. ~~Veri setindeki sızıntıları önlemek amacıyla kareleri uçuş/video bazlı (sequence ID) olarak yeniden train/val/test kümelerine ayırmak.~~ *(Tamamlandı)*
+2. Temizlenmiş veri kümesi üzerinde ikinci nesne tespit mimarisini (örneğin **RT-DETR** veya **DETR** varyantı) aynı test kümesinde eğitip performansını mevcut **YOLO** mimarisi ile kıyaslamak.
