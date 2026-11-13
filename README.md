@@ -3,9 +3,61 @@
 Bu proje; İnsansız Hava Araçlarından (İHA) alınan elektro-optik (EO) ve termal görüntülerde küçük hedeflerin tespit edilmesini, sınıflandırılmasını ve elde edilen sonuçların operasyonel durum raporu olarak doğal dilde sunulmasını amaçlamaktadır.
 
 ---
-
-
 ## Sistem Mimarisi ve İş Akışı
+
+```text
++-----------------------------------------------------------------------+
+|            Birleştirilmiş İHA Veri Seti (EO ve Termal)                |
++-----------------------------------+-----------------------------------+
+                                    |
+                                    v
++-----------------------------------------------------------------------+
+|  Veri Sızıntısı Kontrolü ve Sequence Bölme (MD5 / Hamming / NCC)      |
+|  Bölme Parmak İzi: da43dd521edebb0d                                   |
++-------------------+-----------------------------------+---------------+
+                    |                                   |
+                    v                                   v
+      +---------------------------+       +---------------------------+
+      |   Eğitim & Doğrulama      |       |   Bağımsız Test Kümesi    |
+      |   (Train & Val)           |       |   (Test: 2974 Görüntü)    |
+      +-------------+-------------+       +-------------+-------------+
+                    |                                   |
+          +---------+---------+                         |
+          |                   |                         |
+          v                   v                         |
+  +---------------+   +---------------+                 |
+  | 1. Mimari:    |   | 2. Mimari:    |                 |
+  | YOLOv8 (CNN)  |   | RT-DETR (ViT) |                 |
+  +-------+-------+   +-------+-------+                 |
+          |                   |                         |
+          +---------+---------+                         |
+                    |                                   |
+                    +-----------------+-----------------+
+                                      |
+                                      v
++-----------------------------------------------------------------------+
+|  Test Değerlendirmesi ve Kıyaslama (mAP@50, mAP@50-95, AP_small)      |
++-------------------+-----------------------------------+---------------+
+                    |                                   |
+                    v                                   v
+      +---------------------------+       +---------------------------+
+      | Performans Metrikleri     |       | Tespit Edilen Sınıflar    |
+      | (metrics_test.csv)        |       | ['person', 'car', ...]    |
+      +---------------------------+       +-------------+-------------+
+                                                        |
+                                                        v
+                                          +---------------------------+
+                                          | Doğal Dil Modülü          |
+                                          | (report_generator.py)     |
+                                          +-------------+-------------+
+                                                        |
+                                                        v
+                                          +---------------------------+
+                                          | Türkçe Durum Raporu       |
+                                          | (20 Örnek Çıktı)          |
+                                          +---------------------------+
+
+
 
 ### 1. Veri Seti ve Kümeler
 Aşağıdaki tabloda, kümeler arası veri sızıntısını (data leakage) önlemek amacıyla uçuş/dizi (sequence) bazlı olarak yeniden ayrılan birleştirilmiş İHA veri setinin (`merged_uav_dataset`) test kümesine ait görüntü ve etiket dağılımları yer almaktadır:
