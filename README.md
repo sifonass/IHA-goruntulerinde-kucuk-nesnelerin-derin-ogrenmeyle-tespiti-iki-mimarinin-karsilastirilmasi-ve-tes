@@ -6,6 +6,28 @@ Bu proje; İnsansız Hava Araçlarından (İHA) alınan elektro-optik (EO) ve te
 
 ## Sistem Mimarisi ve İş Akışı
 
+Projenin veri hazırlama, sızıntı kontrolü, model eğitimi, test değerlendirmesi ve doğal dil raporlama aşamalarını gösteren uçtan uca akış şeması aşağıdadır:
+
+```mermaid
+flowchart TD
+    A[("Birleştirilmiş İHA Veri Seti<br/>(Elektro-Optik & Termal)")] --> B["Sızıntı Kontrolü ve Sequence Bölme<br/>(MD5 / Hamming / NCC - Parmak İzi: da43dd521edebb0d)"]
+    B --> C["Eğitim (Train) & Doğrulama (Val)"]
+    B --> D["Bağımsız Test Kümesi (Test)"]
+    
+    C --> E["1. Mimari: YOLOv8<br/>(CNN Tabanlı Tek Aşamalı Tespit)"]
+    C --> F["2. Mimari: RT-DETR<br/>(Transformer Tabanlı Tespit)"]
+    
+    E --> G{"Test Kümesi Değerlendirmesi<br/>(mAP@50, mAP@50-95, AP_small)"}
+    F --> G
+    
+    G --> H["Karşılaştırmalı Performans Analizi<br/>(metrics_test.csv)"]
+    G --> I["Tespit Edilen Sınıf Listesi<br/>Örn: ['person', 'person', 'car']"]
+    
+    I --> J["Doğal Dil Raporlama Modülü<br/>(report_generator.py - Kural Tabanlı NLG)"]
+    J --> K["Operatör Dostu Türkçe Durum Raporu<br/>'Gözlem sahasında 2 adet person ve 1 adet car tespit edilmiştir.'"]
+
+## Sistem Mimarisi ve İş Akışı
+
 ### 1. Veri Seti ve Kümeler
 Aşağıdaki tabloda, kümeler arası veri sızıntısını (data leakage) önlemek amacıyla uçuş/dizi (sequence) bazlı olarak yeniden ayrılan birleştirilmiş İHA veri setinin (`merged_uav_dataset`) test kümesine ait görüntü ve etiket dağılımları yer almaktadır:
 
