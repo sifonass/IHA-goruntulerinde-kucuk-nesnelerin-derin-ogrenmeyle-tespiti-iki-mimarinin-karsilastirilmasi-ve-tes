@@ -5,7 +5,6 @@ Bu proje; İnsansız Hava Araçlarından (İHA) alınan elektro-optik (EO) ve te
 ---
 ## Sistem Mimarisi ve İş Akışı
 
-```text
 +-----------------------------------------------------------------------+
 |            Birleştirilmiş İHA Veri Seti (EO ve Termal)                |
 +-----------------------------------+-----------------------------------+
@@ -56,8 +55,6 @@ Bu proje; İnsansız Hava Araçlarından (İHA) alınan elektro-optik (EO) ve te
                                           | Türkçe Durum Raporu       |
                                           | (20 Örnek Çıktı)          |
                                           +---------------------------+
-
-
 
 ### 1. Veri Seti ve Kümeler
 Aşağıdaki tabloda, kümeler arası veri sızıntısını (data leakage) önlemek amacıyla uçuş/dizi (sequence) bazlı olarak yeniden ayrılan birleştirilmiş İHA veri setinin (`merged_uav_dataset`) test kümesine ait görüntü ve etiket dağılımları yer almaktadır:
