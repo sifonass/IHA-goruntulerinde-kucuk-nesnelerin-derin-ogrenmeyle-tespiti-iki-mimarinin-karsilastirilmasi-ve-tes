@@ -1,6 +1,6 @@
 # Elektro-Optik ve Termal İHA Görüntülerinde Küçük Hedeflerin Derin Öğrenme ile Tespiti ve Doğal Dilde Raporlanması
 
-Bu proje; İnsansız Hava Araçlarından (İHA) alınan elektro-optik (EO) ve termal görüntülerde küçük hedeflerin tespit edilmesini, sınıflandırılmasını ve elde edilen sonuçların operasyonel durum raporu olarak doğal dilde sunulmasını amaçlamaktadır.
+Bu proje; İnsansız Hava Araçlarından (İHA) alınan elektro-optik (EO) ve termal görüntülerde küçük hedeflerin tespit edilmesini, sınıflandırılmasını ve elde edilen sonuçların operasyonel durum raporu olarak doğal dilde sunulmasını amaçlamaktadır. Çalışmada CNN tabanlı **YOLOv8** ile Transformer tabanlı **RT-DETR** mimarileri, sızıntısız (leakage-free) bağımsız bir test kümesinde karşılaştırılmıştır.
 
 ---
 
@@ -69,6 +69,18 @@ Aşağıdaki tabloda, kümeler arası veri sızıntısını (data leakage) önle
 | :--- | :---: | :---: | :---: | :---: | :---: |
 | **Test** | 2974 | 2974 (97 arka plan) | 9611 | 2295 | %23.88 |
 
+Test kümesinin sınıf bazlı dağılımı aşağıdadır (küçük nesne: COCO tanımıyla alan ≤ 1024 px):
+
+| Sınıf ID | Sınıf Adı | Örnek Sayısı | Küçük Nesne Sayısı | Sınıf İçi Küçük Oranı (%) |
+| :---: | :--- | :---: | :---: | :---: |
+| 0 | `person` | 6605 | 1568 | %23.74 |
+| 1 | `car` | 1906 | 44 | %2.31 |
+| 2 | `bicycle` | 515 | 350 | %67.96 |
+| 3 | `other_vehicle` | 19 | 1 | %5.26 |
+| 4 | `drone` | 383 | 253 | %66.06 |
+| 5 | `mine` | 183 | 79 | %43.17 |
+| | **Toplam** | **9611** | **2295** | **%23.88** |
+
 ---
 
 ## 2. Kümeler Arası Veri Sızıntısı (Data Leakage) Kontrolü ve Çözümü
@@ -87,6 +99,8 @@ Aşağıdaki tabloda, kümeler arası veri sızıntısını (data leakage) önle
     * `test -> train`: `1.000`
     * `test -> val`: `0.976`
   * **Doğrulama Çıktısı:** `SIZINTI YOK - train/val/test ayrık` (**Bölme Parmak İzi / Split Fingerprint:** `da43dd521edebb0d`)
+
+> **Not:** `test -> train` NCC değerinin `1.000` çıkması, farklı sequence'lerde görsel olarak benzer sahnelerin (ör. aynı kamera düzeneği veya sabit arka plan) bulunabildiğini göstermektedir. Bu durum aynı dosya veya aynı uçuş dizisinin kümeler arasında paylaşıldığı anlamına gelmez; yukarıdaki MD5, yakın kopya ve dosya adı kontrolleri `0` sonuç vermiştir.
 
 ---
 
@@ -117,14 +131,14 @@ Nesne tespit modellerinden alınan ham çıktıları operatör dostu Türkçe du
 
 #### Sınıf Bazlı Başarım Tablosu (YOLOv8)
 
-| Sınıf ID | Sınıf Adı (Class Name) | Örnek Sayısı (Instances) | Küçük Nesne Sayısı (`<32x32 px`) | mAP@50 | mAP@50-95 | AP_small@50-95 |
-| :---: | :--- | :---: | :---: | :---: | :---: | :---: |
-| 0 | `person` | 6605 | 1568 | 0.9677 | 0.6617 | 0.5166 |
-| 1 | `car` | 1906 | 44 | 0.9889 | 0.9062 | 0.5523 |
-| 2 | `bicycle` | 515 | 350 | 0.8811 | 0.5175 | 0.4465 |
-| 3 | `other_vehicle` | 19 | 1 | 0.5917 | 0.3568 | 0.0000 |
-| 4 | `drone` | 383 | 253 | 0.9575 | 0.6589 | 0.5795 |
-| 5 | `mine` | 183 | 79 | 0.9949 | 0.6316 | 0.5999 |
+| Sınıf ID | Sınıf Adı (Class Name) | Örnek Sayısı (Instances) | Küçük Nesne Sayısı (`<32x32 px`) | mAP@50 | mAP@50-95 | AP_small@50 | AP_small@50-95 |
+| :---: | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
+| 0 | `person` | 6605 | 1568 | 0.9677 | 0.6617 | 0.9283 | 0.5166 |
+| 1 | `car` | 1906 | 44 | 0.9889 | 0.9062 | 0.8832 | 0.5523 |
+| 2 | `bicycle` | 515 | 350 | 0.8811 | 0.5175 | 0.8265 | 0.4465 |
+| 3 | `other_vehicle` | 19 | 1 | 0.5917 | 0.3568 | 0.0000 | 0.0000 |
+| 4 | `drone` | 383 | 253 | 0.9575 | 0.6589 | 0.9407 | 0.5795 |
+| 5 | `mine` | 183 | 79 | 0.9949 | 0.6316 | 1.0000 | 0.5999 |
 
 > **YOLOv8 Değerlendirme Notu:** Sızıntı öncesi (ardışık kare ezberli) dağılımda `%93.66` olan `mAP@50` değeri, sızıntılar tamamen temizlendikten sonra gerçek genelleme performansını yansıtarak `%89.70` olarak gerçekleşmiştir. Ana sınıfların (`person`, `car`, `drone`, `mine`) tamamı `%95.7–%99.5` bandında yüksek başarım sergilerken, `other_vehicle` sınıfındaki düşük skor test kümesindeki örnek azlığından (`n=19`) kaynaklanmaktadır.
 
@@ -168,14 +182,14 @@ Nesne tespit modellerinden alınan ham çıktıları operatör dostu Türkçe du
 
 #### Sınıf Bazlı Başarım Tablosu (RT-DETR)
 
-| Sınıf ID | Sınıf Adı (Class Name) | Örnek Sayısı (Instances) | Küçük Nesne Sayısı (`<32x32 px`) | mAP@50 | mAP@50-95 | AP_small@50-95 |
-| :---: | :--- | :---: | :---: | :---: | :---: | :---: |
-| 0 | `person` | 6605 | 1568 | 0.9803 | - | 0.5531 |
-| 1 | `car` | 1906 | 44 | 0.9885 | - | 0.5543 |
-| 2 | `bicycle` | 515 | 350 | 0.9201 | - | 0.5471 |
-| 3 | `other_vehicle` | 19 | 1 | 0.6273 | - | 0.0667 |
-| 4 | `drone` | 383 | 253 | 0.9627 | - | 0.6164 |
-| 5 | `mine` | 183 | 79 | 0.9921 | - | 0.8462 |
+| Sınıf ID | Sınıf Adı (Class Name) | Örnek Sayısı (Instances) | Küçük Nesne Sayısı (`<32x32 px`) | mAP@50 | mAP@50-95 | AP_small@50 | AP_small@50-95 |
+| :---: | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
+| 0 | `person` | 6605 | 1568 | 0.9803 | 0.6863 | 0.9652 | 0.5531 |
+| 1 | `car` | 1906 | 44 | 0.9885 | 0.8836 | 0.8474 | 0.5543 |
+| 2 | `bicycle` | 515 | 350 | 0.9201 | 0.5892 | 0.9009 | 0.5471 |
+| 3 | `other_vehicle` | 19 | 1 | 0.6273 | 0.4348 | 0.1111 | 0.0667 |
+| 4 | `drone` | 383 | 253 | 0.9627 | 0.6883 | 0.9550 | 0.6164 |
+| 5 | `mine` | 183 | 79 | 0.9921 | 0.7280 | 0.9986 | 0.8462 |
 
 > **RT-DETR Değerlendirme Notu:** Transformer tabanlı öz-dikkat (self-attention) mimarisine sahip RT-DETR modeli, sızıntısız bağımsız test kümesinde `%91.19` genel `mAP@50` ve `%53.06` `AP_small@50-95` başarımına ulaşmıştır. Özellikle küçük hedeflerin yoğun olduğu `mine` (`AP_small@50-95 = 0.8462`), `drone` (`0.6164`) ve `bicycle` (`0.5471`) sınıflarında güçlü konumlandırma hassasiyeti sergilemiştir.
 
@@ -208,22 +222,40 @@ Nesne tespit modellerinden alınan ham çıktıları operatör dostu Türkçe du
 
 ## 5. YOLOv8 vs. RT-DETR Karşılaştırmalı Test Sonuçları
 
-Aynı veri bölmesi (`da43dd521edebb0d`) ve aynı bağımsız test kümesi (`2974 görüntü`, `9611 nesne`, `2295 küçük nesne`) üzerinde iki mimarinin karşılaştırmalı performans özeti aşağıdadır:
+Aynı veri bölmesi (`da43dd521edebb0d`) ve aynı bağımsız test kümesi (`2974 görüntü`, `9611 nesne`, `2295 küçük nesne`) üzerinde iki mimarinin karşılaştırmalı performans özeti aşağıdadır. Fark sütunları mutlak metrik farkını (yüzde puan) gösterir.
+
+### 5.1. Genel Karşılaştırma
 
 | Metrik / Kriter | YOLOv8 (CNN) | RT-DETR (Transformer) | Fark (RT-DETR - YOLOv8) |
 | :--- | :---: | :---: | :---: |
-| **mAP@50 (Genel)** | 0.8970 | **0.9119** | `+0.0149` (+%1.49) |
-| **mAP@50-95 (Genel)** | 0.6221 | **0.6684** | `+0.0463` (+%4.63) |
-| **AP_small@50 (`<32x32 px`)** | 0.7631 | **0.7964** | `+0.0333` (+%3.33) |
-| **AP_small@50-95 (`<32x32 px`)** | 0.4491 | **0.5306** | `+0.0815` (+%8.15) |
-| **`person` mAP@50 / AP_small@50-95** | 0.9677 / 0.5166 | **0.9803 / 0.5531** | `+0.0126` / `+0.0365` |
-| **`car` mAP@50 / AP_small@50-95** | **0.9889** / 0.5523 | 0.9885 / **0.5543** | `-0.0004` / `+0.0020` |
-| **`bicycle` mAP@50 / AP_small@50-95** | 0.8811 / 0.4465 | **0.9201 / 0.5471** | `+0.0390` / `+0.1006` |
-| **`other_vehicle` mAP@50 / AP_small@50-95** | 0.5917 / 0.0000 | **0.6273 / 0.0667** | `+0.0356` / `+0.0667` |
-| **`drone` mAP@50 / AP_small@50-95** | 0.9575 / 0.5795 | **0.9627 / 0.6164** | `+0.0052` / `+0.0369` |
-| **`mine` mAP@50 / AP_small@50-95** | **0.9949** / 0.5999 | 0.9921 / **0.8462** | `-0.0028` / `+0.2463` |
+| **mAP@50 (Genel)** | 0.8970 | **0.9119** | `+0.0149` (+1.49 puan) |
+| **mAP@50-95 (Genel)** | 0.6221 | **0.6684** | `+0.0463` (+4.63 puan) |
+| **AP_small@50 (`<32x32 px`)** | 0.7631 | **0.7964** | `+0.0333` (+3.33 puan) |
+| **AP_small@50-95 (`<32x32 px`)** | 0.4491 | **0.5306** | `+0.0815` (+8.15 puan) |
 
-> **Karşılaştırmalı Değerlendirme:** RT-DETR, özellikle `<32x32 px` boyutundaki küçük hedeflerde (`AP_small@50-95` metriğinde **+%8.15** artış) ve genel kutu hizalama hassasiyetinde (`mAP@50-95` metriğinde **+%4.63** artış) CNN tabanlı YOLOv8 mimarisine kıyasla belirgin üstünlük sağlamıştır.
+### 5.2. Sınıf Bazlı Karşılaştırma (YOLOv8 / RT-DETR)
+
+Her hücrede `YOLOv8 / RT-DETR` değeri, altında RT-DETR − YOLOv8 farkı verilmiştir. Kalın değer, ilgili metrikte daha yüksek olan modeli gösterir.
+
+| Sınıf | mAP@50 | mAP@50-95 | AP_small@50 | AP_small@50-95 |
+| :--- | :---: | :---: | :---: | :---: |
+| `person` | 0.9677 / **0.9803**<br>`+0.0126` | 0.6617 / **0.6863**<br>`+0.0246` | 0.9283 / **0.9652**<br>`+0.0369` | 0.5166 / **0.5531**<br>`+0.0365` |
+| `car` | **0.9889** / 0.9885<br>`-0.0004` | **0.9062** / 0.8836<br>`-0.0226` | **0.8832** / 0.8474<br>`-0.0358` | 0.5523 / **0.5543**<br>`+0.0020` |
+| `bicycle` | 0.8811 / **0.9201**<br>`+0.0390` | 0.5175 / **0.5892**<br>`+0.0717` | 0.8265 / **0.9009**<br>`+0.0744` | 0.4465 / **0.5471**<br>`+0.1006` |
+| `other_vehicle` | 0.5917 / **0.6273**<br>`+0.0356` | 0.3568 / **0.4348**<br>`+0.0780` | 0.0000 / **0.1111**<br>`+0.1111` | 0.0000 / **0.0667**<br>`+0.0667` |
+| `drone` | 0.9575 / **0.9627**<br>`+0.0052` | 0.6589 / **0.6883**<br>`+0.0294` | 0.9407 / **0.9550**<br>`+0.0143` | 0.5795 / **0.6164**<br>`+0.0369` |
+| `mine` | **0.9949** / 0.9921<br>`-0.0028` | 0.6316 / **0.7280**<br>`+0.0964` | **1.0000** / 0.9986<br>`-0.0014` | 0.5999 / **0.8462**<br>`+0.2463` |
+
+### 5.3. COCO Protokolü ile Çapraz Kontrol
+
+Ultralytics'in kendi mAP hesabı ile `pycocotools` (101 nokta interpolasyon) sonuçları birbiriyle tutarlıdır ve iki protokolde de sıralama değişmemektedir:
+
+| Metrik | YOLOv8 Ultralytics | YOLOv8 COCO | RT-DETR Ultralytics | RT-DETR COCO | Fark (COCO, RT-DETR - YOLOv8) |
+| :--- | :---: | :---: | :---: | :---: | :---: |
+| **mAP@50** | 0.8970 | 0.8624 | 0.9119 | 0.9093 | `+0.0469` |
+| **mAP@50-95** | 0.6221 | 0.6037 | 0.6684 | 0.6662 | `+0.0625` |
+
+> **Karşılaştırmalı Değerlendirme:** RT-DETR, özellikle `<32x32 px` boyutundaki küçük hedeflerde (`AP_small@50-95` metriğinde **+8.15 puan**) ve genel kutu hizalama hassasiyetinde (`mAP@50-95` metriğinde **+4.63 puan**) CNN tabanlı YOLOv8 mimarisine kıyasla belirgin üstünlük sağlamıştır. Üstünlük `person`, `bicycle`, `drone` ve `other_vehicle` sınıflarında tutarlıdır; `car` sınıfında ise YOLOv8, `mAP@50-95` (`0.9062` - `0.8836`) ve `AP_small@50` (`0.8832` - `0.8474`) metriklerinde daha yüksektir. `mine` sınıfında `mAP@50` değerleri pratikte eşittir (`0.9949` - `0.9921`), RT-DETR farkı daha sıkı IoU eşiklerinde ortaya çıkmaktadır (`mAP@50-95`: `+0.0964`).
 
 ---
 
@@ -231,7 +263,24 @@ Aynı veri bölmesi (`da43dd521edebb0d`) ve aynı bağımsız test kümesi (`297
 
 Bağımsız test kümesi (`2974 görüntü`, `9611 nesne`) ve örnek çıktılar incelendiğinde, her iki mimarinin güçlü genelleme performansının yanı sıra sahaya ve mimariye özgü belirli hata modları ile kısıtlar tespit edilmiştir:
 
-1. **Çok Uzak Mesafeli ve Aşırı Küçük Hedeflerde False Negative (Kaçırılan Tespit) Artışı:** İHA irtifasının yükseldiği sahnelerde hedef alanının aşırı küçülmesiyle (`<12x12 px`), özellikle CNN tabanlı YOLOv8 mimarisinin alt örnekleme (downsampling) katmanlarında uzamsal öznitelik kaybı yaşanmaktadır. Örnek **03** ve **11** incelendiğinde, kalabalık veya kısmen örtüşen insan gruplarında YOLOv8'in sırasıyla 2 ve 17 tespitine karşılık RT-DETR'ın 6 ve 19 tespit üreterek daha yüksek duyarlılık (recall) sağladığı; ancak çok düşük kontrastlı arka planlarda her iki modelde de kaçırılan hedeflerin (False Negative) oluşabildiği gözlemlenmiştir.
-2. **Termal Yansımalar ve Arka Plan Karmaşasında False Positive (Yanlış Alarm) Oluşumu:** Gün içi güneş ışınımını soğuran zemin dokuları, sıcak araç aksamları veya gökyüzü/bulut geçişlerindeki ani yoğunluk değişimleri, termal ve EO spektrumda küçük hedeflerle benzer parlaklık dağılımı sergileyebilmektedir. Örneğin **02** numaralı karede RT-DETR gerçek hedeflere ek olarak arka plandaki ikincil nesneleri/yansımaları `car` olarak etiketleyerek False Positive üretme eğilimi gösterebilmektedir.
+1. **Çok Uzak Mesafeli ve Aşırı Küçük Hedeflerde False Negative (Kaçırılan Tespit) Artışı:** İHA irtifasının yükseldiği sahnelerde hedef alanının aşırı küçülmesiyle (`<12x12 px`), özellikle CNN tabanlı YOLOv8 mimarisinin alt örnekleme (downsampling) katmanlarında uzamsal öznitelik kaybı yaşanması beklenmektedir. Örnek **03** ve **11** incelendiğinde, kalabalık veya kısmen örtüşen insan gruplarında YOLOv8'in sırasıyla 2 ve 17 `person` tespitine karşılık RT-DETR'ın 6 ve 19 `person` tespiti ürettiği; yani RT-DETR'ın bu karelerde daha yüksek duyarlılık (recall) sağladığı gözlemlenmiştir. Çok düşük kontrastlı arka planlarda ise her iki modelde de kaçırılan hedeflerin (False Negative) oluşabildiği görülmüştür.
+2. **Termal Yansımalar ve Arka Plan Karmaşasında False Positive (Yanlış Alarm) Oluşumu:** Gün içi güneş ışınımını soğuran zemin dokuları, sıcak araç aksamları veya gökyüzü/bulut geçişlerindeki ani yoğunluk değişimleri, termal ve EO spektrumda küçük hedeflerle benzer parlaklık dağılımı sergileyebilmektedir. Örneğin **02** numaralı karede RT-DETR 6 `car` raporlarken YOLOv8 4 `car` raporlamıştır; aradaki fazladan tespitlerin bir kısmı arka plandaki ikincil nesnelerden/yansımalardan kaynaklanıyor olabilir ve GT kutularıyla karşılaştırılarak doğrulanmalıdır. Bu nedenle bu gözlem kesin bir False Positive ölçümü değil, olası bir hata modu olarak değerlendirilmelidir.
 3. **Sınıf Dengesizliği ve Nadir Sınıflarda Genelleme Kısıtı:** Birleştirilmiş veri setinde `person` (`n=6605`) ve `car` (`n=1906`) sınıfları baskın iken `other_vehicle` (`n=19`) sınıfı oldukça sınırlı sayıda örneğe sahiptir. Bu dengesizlik, `other_vehicle` sınıfında küçük nesne başarımının (`AP_small@50-95`) YOLOv8'de `0.0000`, RT-DETR'da ise `0.0667` seviyesinde kalmasına neden olmuştur.
-4. **Mimari Hesaplama Maliyeti ve Donanım Kısıtları (RT-DETR vs. YOLOv8):** RT-DETR, küresel öz-dikkat (self-attention) mekanizması ve NMS-free (Non-Maximum Suppression gerektirmeyen) uçtan uca yapısı sayesinde küçük nesne konumlandırmada (`AP_small@50-95` farkı `+%8.15`) açık ara üstünlük sağlasa da, encoder/decoder dikkat katmanlarının bellek bant genişliği ve FLOPs gereksinimi YOLOv8'e kıyasla daha yüksektir. Dolayısıyla yüksek işlem kapasiteli yer istasyonlarında RT-DETR en yüksek doğruluğu sunarken, güç ve VRAM bütçesi kısıtlı gömülü İHA uçuş bilgisayarlarında (ör. NVIDIA Jetson Nano/Orin) gerçek zamanlı FPS gereksinimleri için YOLOv8 daha hafif bir alternatif oluşturmaktadır.
+4. **Küçük Örneklem Kaynaklı İstatistiksel Belirsizlik:** `other_vehicle` sınıfında yalnızca **1** küçük nesne, `car` sınıfında **44** küçük nesne bulunmaktadır; dolayısıyla bu sınıflara ait `AP_small` değerleri istatistiksel olarak güvenilir bir karşılaştırma sunmaz. Benzer şekilde `mine` sınıfındaki `+0.2463` `AP_small@50-95` farkı yalnızca `79` küçük nesneye dayanmaktadır. Sonuçlar tek bir eğitim koşusuna aittir; farklı rastgele tohumlarla tekrar edilen eğitimler ve güven aralıkları, farkların kalıcılığını doğrulamak için gelecek çalışmada eklenmelidir.
+5. **Mimari Hesaplama Maliyeti ve Donanım Kısıtları (RT-DETR vs. YOLOv8):** RT-DETR, küresel öz-dikkat (self-attention) mekanizması ve NMS-free (Non-Maximum Suppression gerektirmeyen) uçtan uca yapısı sayesinde küçük nesne konumlandırmada (`AP_small@50-95` farkı `+8.15 puan`) üstünlük sağlasa da, encoder/decoder dikkat katmanlarının bellek bant genişliği ve FLOPs gereksinimi genel olarak YOLOv8'e kıyasla daha yüksektir. Dolayısıyla yüksek işlem kapasiteli yer istasyonlarında RT-DETR en yüksek doğruluğu sunarken, güç ve VRAM bütçesi kısıtlı gömülü İHA uçuş bilgisayarlarında (ör. NVIDIA Jetson Nano/Orin) gerçek zamanlı FPS gereksinimleri için YOLOv8 daha hafif bir alternatif oluşturmaktadır. Bu çalışmada FPS, gecikme (latency) ve parametre sayısı ölçülmemiştir; bu değerlendirme mimarilerin bilinen yapısal özelliklerine dayanmaktadır.
+
+---
+
+## 7. Tekrarlanabilirlik (Reproducibility)
+
+| Öğe | YOLOv8 | RT-DETR |
+| :--- | :--- | :--- |
+| Eğitim koşusu | `uav_thermal_6cls` | `uav_rtdetr_6cls` |
+| Ağırlık dosyası | `runs/uav_thermal_6cls/weights/best.pt` | `runs/uav_rtdetr_6cls/weights/best.pt` |
+| Bölme parmak izi | `da43dd521edebb0d` | `da43dd521edebb0d` |
+| Test kümesi | 2974 görüntü / 9611 nesne | 2974 görüntü / 9611 nesne |
+| Küçük nesne tanımı | COCO alan ≤ 1024 px, `maxDets=300` | COCO alan ≤ 1024 px, `maxDets=300` |
+| Güven eşiği (görselleştirme) | `conf >= 0.25` | `conf >= 0.25` |
+| Metrik kaynakları | `ultralytics` (mAP), `pycocotools` (AP_small, çapraz kontrol) | `ultralytics` (mAP), `pycocotools` (AP_small, çapraz kontrol) |
+
+Her iki modelin metrik dosyaları aynı bölme parmak iziyle üretilmiştir; bu sayede sonuçlar aynı test kümesi üzerinde doğrudan karşılaştırılabilir.
