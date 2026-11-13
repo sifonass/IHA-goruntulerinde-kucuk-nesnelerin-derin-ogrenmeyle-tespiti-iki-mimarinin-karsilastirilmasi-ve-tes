@@ -90,11 +90,21 @@ Aşağıdaki tabloda, kümeler arası veri sızıntısını (data leakage) önle
 
 ---
 
-## 3. Test Sonuçları (Küme: TEST — Sızıntısız)
+## 3. Doğal Dil Raporlama Modülü
 
-Sızıntılardan arındırılmış 2974 görüntülük (9611 nesne, 2295 küçük nesne) güncel **TEST** kümesi üzerinde iki farklı derin öğrenme mimarisi (YOLOv8 ve RT-DETR) ayrı ayrı değerlendirilmiştir.
+Nesne tespit modellerinden alınan ham çıktıları operatör dostu Türkçe durum raporuna dönüştüren modüldür:
 
-### 3.1. YOLOv8 Test Sonuçları
+* **Kodun Bulunduğu Dosya:** `report_generator.py`
+* **Girdi Formatı:** Sınıf adları ve tespit adedi içeren tespit listesi (Örn: `['person', 'person', 'car']`)
+* **Çıktı Formatı:** Doğal dilde rapor cümlesi (Örn: `"Gözlem sahasında 2 adet person ve 1 adet car tespit edilmiştir."`)
+
+---
+
+## 4. Test Sonuçları ve 20 Örnek Çıktı (Küme: TEST — Sızıntısız)
+
+*(Tüm örnek görsellerde **yeşil kutular** gerçek etiketleri (GT), **kırmızı kutular** `conf >= 0.25` eşiğindeki model tahminlerini temsil etmektedir.)*
+
+### 4.1. YOLOv8 Test Sonuçları
 
 #### Genel ve Küçük Nesne Başarım Tablosu (YOLOv8)
 
@@ -118,9 +128,34 @@ Sızıntılardan arındırılmış 2974 görüntülük (9611 nesne, 2295 küçü
 
 > **YOLOv8 Değerlendirme Notu:** Sızıntı öncesi (ardışık kare ezberli) dağılımda `%93.66` olan `mAP@50` değeri, sızıntılar tamamen temizlendikten sonra gerçek genelleme performansını yansıtarak `%89.70` olarak gerçekleşmiştir. Ana sınıfların (`person`, `car`, `drone`, `mine`) tamamı `%95.7–%99.5` bandında yüksek başarım sergilerken, `other_vehicle` sınıfındaki düşük skor test kümesindeki örnek azlığından (`n=19`) kaynaklanmaktadır.
 
+#### YOLOv8 — Test Kümesinden Seçilen 20 Örnek Tespit ve Durum Raporları
+
+| Örnek | Tespit Görseli (YOLOv8) | Doğal Dil Durum Raporu |
+| :---: | :---: | :--- |
+| **01** | ![01](ornek_ciktilar/01_0001053.jpg) | Gözlem sahasında 6 adet person tespit edilmiştir. |
+| **02** | ![02](ornek_ciktilar/02_0001673.jpg) | Gözlem sahasında 4 adet car ve 1 adet person tespit edilmiştir. |
+| **03** | ![03](ornek_ciktilar/03_0002483.jpg) | Gözlem sahasında 4 adet car ve 2 adet person tespit edilmiştir. |
+| **04** | ![04](ornek_ciktilar/04_0002793.jpg) | Gözlem sahasında 3 adet car ve 2 adet person tespit edilmiştir. |
+| **05** | ![05](ornek_ciktilar/05_11_000109.jpg) | Gözlem sahasında 1 adet drone tespit edilmiştir. |
+| **06** | ![06](ornek_ciktilar/06_11_000269.jpg) | Gözlem sahasında 1 adet drone tespit edilmiştir. |
+| **07** | ![07](ornek_ciktilar/07_13_000264.jpg) | Gözlem sahasında 3 adet drone tespit edilmiştir. |
+| **08** | ![08](ornek_ciktilar/08_14_000237.jpg) | Gözlem sahasında 2 adet drone tespit edilmiştir. |
+| **09** | ![09](ornek_ciktilar/09_17_000371.jpg) | Gözlem sahasında 2 adet drone tespit edilmiştir. |
+| **10** | ![10](ornek_ciktilar/10_23_000253.jpg) | Gözlem sahasında 2 adet drone tespit edilmiştir. |
+| **11** | ![11](ornek_ciktilar/11_240418.jpg) | Gözlem sahasında 17 adet person tespit edilmiştir. |
+| **12** | ![12](ornek_ciktilar/12_250529.jpg) | Gözlem sahasında 10 adet person tespit edilmiştir. |
+| **13** | ![13](ornek_ciktilar/13_250558.jpg) | Gözlem sahasında 4 adet person tespit edilmiştir. |
+| **14** | ![14](ornek_ciktilar/14_250596.jpg) | Gözlem sahasında 3 adet person tespit edilmiştir. |
+| **15** | ![15](ornek_ciktilar/15_260153.jpg) | Gözlem sahasında 1 adet person tespit edilmiştir. |
+| **16** | ![16](ornek_ciktilar/16_260521.jpg) | Gözlem sahasında 1 adet person tespit edilmiştir. |
+| **17** | ![17](ornek_ciktilar/17_260676.jpg) | Gözlem sahasında 4 adet person tespit edilmiştir. |
+| **18** | ![18](ornek_ciktilar/18_260967.jpg) | Gözlem sahasında 2 adet person tespit edilmiştir. |
+| **19** | ![19](ornek_ciktilar/19_270126.jpg) | Gözlem sahasında 2 adet person tespit edilmiştir. |
+| **20** | ![20](ornek_ciktilar/20_270296.jpg) | Gözlem sahasında 5 adet person tespit edilmiştir. |
+
 ---
 
-### 3.2. RT-DETR Test Sonuçları
+### 4.2. RT-DETR Test Sonuçları
 
 #### Genel ve Küçük Nesne Başarım Tablosu (RT-DETR)
 
@@ -144,11 +179,36 @@ Sızıntılardan arındırılmış 2974 görüntülük (9611 nesne, 2295 küçü
 
 > **RT-DETR Değerlendirme Notu:** Transformer tabanlı öz-dikkat (self-attention) mimarisine sahip RT-DETR modeli, sızıntısız bağımsız test kümesinde `%91.19` genel `mAP@50` ve `%53.06` `AP_small@50-95` başarımına ulaşmıştır. Özellikle küçük hedeflerin yoğun olduğu `mine` (`AP_small@50-95 = 0.8462`), `drone` (`0.6164`) ve `bicycle` (`0.5471`) sınıflarında güçlü konumlandırma hassasiyeti sergilemiştir.
 
+#### RT-DETR — Test Kümesinden Seçilen 20 Örnek Tespit ve Durum Raporları
+
+| Örnek | Tespit Görseli (RT-DETR) | Doğal Dil Durum Raporu |
+| :---: | :---: | :--- |
+| **01** | ![01](ornek_ciktilar_rtdetr/01_0001053.jpg) | Gözlem sahasında 6 adet person tespit edilmiştir. |
+| **02** | ![02](ornek_ciktilar_rtdetr/02_0001673.jpg) | Gözlem sahasında 4 adet car ve 1 adet person tespit edilmiştir. |
+| **03** | ![03](ornek_ciktilar_rtdetr/03_0002483.jpg) | Gözlem sahasında 4 adet car ve 2 adet person tespit edilmiştir. |
+| **04** | ![04](ornek_ciktilar_rtdetr/04_0002793.jpg) | Gözlem sahasında 3 adet car ve 2 adet person tespit edilmiştir. |
+| **05** | ![05](ornek_ciktilar_rtdetr/05_11_000109.jpg) | Gözlem sahasında 1 adet drone tespit edilmiştir. |
+| **06** | ![06](ornek_ciktilar_rtdetr/06_11_000269.jpg) | Gözlem sahasında 1 adet drone tespit edilmiştir. |
+| **07** | ![07](ornek_ciktilar_rtdetr/07_13_000264.jpg) | Gözlem sahasında 3 adet drone tespit edilmiştir. |
+| **08** | ![08](ornek_ciktilar_rtdetr/08_14_000237.jpg) | Gözlem sahasında 2 adet drone tespit edilmiştir. |
+| **09** | ![09](ornek_ciktilar_rtdetr/09_17_000371.jpg) | Gözlem sahasında 2 adet drone tespit edilmiştir. |
+| **10** | ![10](ornek_ciktilar_rtdetr/10_23_000253.jpg) | Gözlem sahasında 2 adet drone tespit edilmiştir. |
+| **11** | ![11](ornek_ciktilar_rtdetr/11_240418.jpg) | Gözlem sahasında 17 adet person tespit edilmiştir. |
+| **12** | ![12](ornek_ciktilar_rtdetr/12_250529.jpg) | Gözlem sahasında 10 adet person tespit edilmiştir. |
+| **13** | ![13](ornek_ciktilar_rtdetr/13_250558.jpg) | Gözlem sahasında 4 adet person tespit edilmiştir. |
+| **14** | ![14](ornek_ciktilar_rtdetr/14_250596.jpg) | Gözlem sahasında 3 adet person tespit edilmiştir. |
+| **15** | ![15](ornek_ciktilar_rtdetr/15_260153.jpg) | Gözlem sahasında 1 adet person tespit edilmiştir. |
+| **16** | ![16](ornek_ciktilar_rtdetr/16_260521.jpg) | Gözlem sahasında 1 adet person tespit edilmiştir. |
+| **17** | ![17](ornek_ciktilar_rtdetr/17_260676.jpg) | Gözlem sahasında 4 adet person tespit edilmiştir. |
+| **18** | ![18](ornek_ciktilar_rtdetr/18_260967.jpg) | Gözlem sahasında 2 adet person tespit edilmiştir. |
+| **19** | ![19](ornek_ciktilar_rtdetr/19_270126.jpg) | Gözlem sahasında 2 adet person tespit edilmiştir. |
+| **20** | ![20](ornek_ciktilar_rtdetr/20_270296.jpg) | Gözlem sahasında 5 adet person tespit edilmiştir. |
+
 ---
 
-### 3.3. YOLOv8 vs. RT-DETR Karşılaştırma Tablosu
+## 5. YOLOv8 vs. RT-DETR Karşılaştırmalı Test Sonuçları
 
-Aynı veri bölmesi (`da43dd521edebb0d`) ve aynı test kümesi (`2974 görüntü`, `9611 nesne`) üzerinde iki mimarinin karşılaştırmalı performans özeti aşağıdadır:
+Aynı veri bölmesi (`da43dd521edebb0d`) ve aynı bağımsız test kümesi (`2974 görüntü`, `9611 nesne`, `2295 küçük nesne`) üzerinde iki mimarinin karşılaştırmalı performans özeti aşağıdadır:
 
 | Metrik / Kriter | YOLOv8 (CNN) | RT-DETR (Transformer) | Fark (RT-DETR - YOLOv8) |
 | :--- | :---: | :---: | :---: |
@@ -163,41 +223,4 @@ Aynı veri bölmesi (`da43dd521edebb0d`) ve aynı test kümesi (`2974 görüntü
 | **`drone` mAP@50 / AP_small@50-95** | 0.9575 / 0.5795 | **0.9627 / 0.6164** | `+0.0052` / `+0.0369` |
 | **`mine` mAP@50 / AP_small@50-95** | **0.9949** / 0.5999 | 0.9921 / **0.8462** | `-0.0028` / `+0.2463` |
 
-> **Karşılaştırmalı Sonuç:** RT-DETR, özellikle `<32x32 px` boyutundaki küçük hedeflerde (`AP_small@50-95` metriğinde **+%8.15** artış) ve genel kutu hizalama hassasiyetinde (`mAP@50-95` metriğinde **+%4.63** artış) CNN tabanlı YOLOv8 mimarisine kıyasla belirgin üstünlük sağlamıştır.
-
----
-
-## 4. Doğal Dil Raporlama Modülü ve 20 Örnek Çıktı
-
-Nesne tespit modelinden alınan ham çıktıları operatör dostu Türkçe durum raporuna dönüştüren modüldür:
-
-* **Kodun Bulunduğu Dosya:** `report_generator.py`
-* **Girdi Formatı:** Sınıf adları ve tespit adedi içeren tespit listesi (Örn: `['person', 'person', 'car']`)
-* **Çıktı Formatı:** Doğal dilde rapor cümlesi (Örn: `"Gözlem sahasında 2 adet person ve 1 adet car tespit edilmiştir."`)
-
-### Test Kümesinden Seçilen 20 Örnek Tespit ve Durum Raporları
-
-*(Görsellerde **yeşil kutular** gerçek etiketleri (GT), **kırmızı kutular** `conf >= 0.25` eşiğindeki model tahminlerini temsil etmektedir.)*
-
-| Örnek | Tespit Görseli | Doğal Dil Durum Raporu |
-| :---: | :---: | :--- |
-| **01** | ![01](ornek_ciktilar/01_0001053.jpg) | Gözlem sahasında 6 adet person tespit edilmiştir. |
-| **02** | ![02](ornek_ciktilar/02_0001673.jpg) | Gözlem sahasında 4 adet car ve 1 adet person tespit edilmiştir. |
-| **03** | ![03](ornek_ciktilar/03_0002483.jpg) | Gözlem sahasında 4 adet car ve 2 adet person tespit edilmiştir. |
-| **04** | ![04](ornek_ciktilar/04_0002793.jpg) | Gözlem sahasında 3 adet car ve 2 adet person tespit edilmiştir. |
-| **05** | ![05](ornek_ciktilar/05_11_000109.jpg) | Gözlem sahasında 1 adet drone tespit edilmiştir. |
-| **06** | ![06](ornek_ciktilar/06_11_000269.jpg) | Gözlem sahasında 1 adet drone tespit edilmiştir. |
-| **07** | ![07](ornek_ciktilar/07_13_000264.jpg) | Gözlem sahasında 3 adet drone tespit edilmiştir. |
-| **08** | ![08](ornek_ciktilar/08_14_000237.jpg) | Gözlem sahasında 2 adet drone tespit edilmiştir. |
-| **09** | ![09](ornek_ciktilar/09_17_000371.jpg) | Gözlem sahasında 2 adet drone tespit edilmiştir. |
-| **10** | ![10](ornek_ciktilar/10_23_000253.jpg) | Gözlem sahasında 2 adet drone tespit edilmiştir. |
-| **11** | ![11](ornek_ciktilar/11_240418.jpg) | Gözlem sahasında 17 adet person tespit edilmiştir. |
-| **12** | ![12](ornek_ciktilar/12_250529.jpg) | Gözlem sahasında 10 adet person tespit edilmiştir. |
-| **13** | ![13](ornek_ciktilar/13_250558.jpg) | Gözlem sahasında 4 adet person tespit edilmiştir. |
-| **14** | ![14](ornek_ciktilar/14_250596.jpg) | Gözlem sahasında 3 adet person tespit edilmiştir. |
-| **15** | ![15](ornek_ciktilar/15_260153.jpg) | Gözlem sahasında 1 adet person tespit edilmiştir. |
-| **16** | ![16](ornek_ciktilar/16_260521.jpg) | Gözlem sahasında 1 adet person tespit edilmiştir. |
-| **17** | ![17](ornek_ciktilar/17_260676.jpg) | Gözlem sahasında 4 adet person tespit edilmiştir. |
-| **18** | ![18](ornek_ciktilar/18_260967.jpg) | Gözlem sahasında 2 adet person tespit edilmiştir. |
-| **19** | ![19](ornek_ciktilar/19_270126.jpg) | Gözlem sahasında 2 adet person tespit edilmiştir. |
-| **20** | ![20](ornek_ciktilar/20_270296.jpg) | Gözlem sahasında 5 adet person tespit edilmiştir. |
+> **Karşılaştırmalı Değerlendirme:** RT-DETR, özellikle `<32x32 px` boyutundaki küçük hedeflerde (`AP_small@50-95` metriğinde **+%8.15** artış) ve genel kutu hizalama hassasiyetinde (`mAP@50-95` metriğinde **+%4.63** artış) CNN tabanlı YOLOv8 mimarisine kıyasla belirgin üstünlük sağlamıştır.
