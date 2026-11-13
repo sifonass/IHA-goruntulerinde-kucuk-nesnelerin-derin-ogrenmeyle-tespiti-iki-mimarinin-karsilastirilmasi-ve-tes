@@ -8,7 +8,7 @@ Bu proje; İnsansız Hava Araçlarından (İHA) alınan elektro-optik (EO) ve te
 
 <pre>
 ┌───────────────────────────────────────────────────────────────────────┐
-│            Birleştirilmiş İHA Veri Seti (EO ve Termal)                │
+│             Birleştirilmiş İHA Veri Seti (EO ve Termal)               │
 └───────────────────────────────────┬───────────────────────────────────┘
                                     │
                                     ▼
@@ -75,9 +75,9 @@ Aşağıdaki tabloda, kümeler arası veri sızıntısını (data leakage) önle
 
 İlk aşamada yapılan MD5 (birebir eşleşme) ve dHash (algısal benzerlik) kontrollerinde tespit edilen sızıntılar giderilmiş, veri seti yeniden yapılandırılmış ve son doğrulama testleri tamamlanmıştır:
 
-* **Önceki Durum:** Kümeler rastgele bölündüğü için 2 adet birebir aynı (MD5) ve 453.198 adet çok benzer (`dHash <= 5`) ardışık video karesi çakışması tespit edilmişti.
-* **Uygulanan Çözüm:** Adil ve akademik olarak güvenilir bir değerlendirme sağlamak amacıyla tüm veri seti uçuş/video dizisi (`sequence ID`) bazlı olarak yeniden `train`, `val` ve `test` kümelerine ayrılmıştır.
-* **Son Doğrulama Sonuçları (MD5 / Hamming / NCC):**
+- **Önceki Durum:** Kümeler rastgele bölündüğü için 2 adet birebir aynı (MD5) ve 453.198 adet çok benzer (`dHash <= 5`) ardışık video karesi çakışması tespit edilmişti.
+- **Uygulanan Çözüm:** Adil ve akademik olarak güvenilir bir değerlendirme sağlamak amacıyla tüm veri seti uçuş/video dizisi (`sequence ID`) bazlı olarak yeniden `train`, `val` ve `test` kümelerine ayrılmıştır.
+- **Son Doğrulama Sonuçları (MD5 / Hamming / NCC):**
   * **Birden Fazla Kümeye Dağılmış Grup:** `0`
   * **Kümeler Arası Birebir Kopya (MD5):** `0`
   * **Kümeler Arası Yakın Kopya:** `0`
@@ -94,9 +94,9 @@ Aşağıdaki tabloda, kümeler arası veri sızıntısını (data leakage) önle
 
 Nesne tespit modellerinden alınan ham çıktıları operatör dostu Türkçe durum raporuna dönüştüren modüldür:
 
-* **Kodun Bulunduğu Dosya:** `report_generator.py`
-* **Girdi Formatı:** Sınıf adları ve tespit adedi içeren tespit listesi (Örn: `['person', 'person', 'car']`)
-* **Çıktı Formatı:** Doğal dilde rapor cümlesi (Örn: `"Gözlem sahasında 2 adet person ve 1 adet car tespit edilmiştir."`)
+- **Kodun Bulunduğu Dosya:** `report_generator.py`
+- **Girdi Formatı:** Sınıf adları ve tespit adedi içeren tespit listesi (Örn: `['person', 'person', 'car']`)
+- **Çıktı Formatı:** Doğal dilde rapor cümlesi (Örn: `"Gözlem sahasında 2 adet person ve 1 adet car tespit edilmiştir."`)
 
 ---
 
@@ -224,3 +224,14 @@ Aynı veri bölmesi (`da43dd521edebb0d`) ve aynı bağımsız test kümesi (`297
 | **`mine` mAP@50 / AP_small@50-95** | **0.9949** / 0.5999 | 0.9921 / **0.8462** | `-0.0028` / `+0.2463` |
 
 > **Karşılaştırmalı Değerlendirme:** RT-DETR, özellikle `<32x32 px` boyutundaki küçük hedeflerde (`AP_small@50-95` metriğinde **+%8.15** artış) ve genel kutu hizalama hassasiyetinde (`mAP@50-95` metriğinde **+%4.63** artış) CNN tabanlı YOLOv8 mimarisine kıyasla belirgin üstünlük sağlamıştır.
+
+---
+
+## 6. Hata Analizi ve Kısıtlar (Error Analysis & Limitations)
+
+Bağımsız test kümesi (`2974 görüntü`, `9611 nesne`) ve örnek çıktılar incelendiğinde, her iki mimarinin güçlü genelleme performansının yanı sıra sahaya ve mimariye özgü belirli hata modları ile kısıtlar tespit edilmiştir:
+
+1. **Çok Uzak Mesafeli ve Aşırı Küçük Hedeflerde False Negative (Kaçırılan Tespit) Artışı:** İHA irtifasının yükseldiği sahnelerde hedef alanının aşırı küçülmesiyle (`<12x12 px`), özellikle CNN tabanlı YOLOv8 mimarisinin alt örnekleme (downsampling) katmanlarında uzamsal öznitelik kaybı yaşanmaktadır. Örnek **03** ve **11** incelendiğinde, kalabalık veya kısmen örtüşen insan gruplarında YOLOv8'in sırasıyla 2 ve 17 tespitine karşılık RT-DETR'ın 6 ve 19 tespit üreterek daha yüksek duyarlılık (recall) sağladığı; ancak çok düşük kontrastlı arka planlarda her iki modelde de kaçırılan hedeflerin (False Negative) oluşabildiği gözlemlenmiştir.
+2. **Termal Yansımalar ve Arka Plan Karmaşasında False Positive (Yanlış Alarm) Oluşumu:** Gün içi güneş ışınımını soğuran zemin dokuları, sıcak araç aksamları veya gökyüzü/bulut geçişlerindeki ani yoğunluk değişimleri, termal ve EO spektrumda küçük hedeflerle benzer parlaklık dağılımı sergileyebilmektedir. Örneğin **02** numaralı karede RT-DETR gerçek hedeflere ek olarak arka plandaki ikincil nesneleri/yansımaları `car` olarak etiketleyerek False Positive üretme eğilimi gösterebilmektedir.
+3. **Sınıf Dengesizliği ve Nadir Sınıflarda Genelleme Kısıtı:** Birleştirilmiş veri setinde `person` (`n=6605`) ve `car` (`n=1906`) sınıfları baskın iken `other_vehicle` (`n=19`) sınıfı oldukça sınırlı sayıda örneğe sahiptir. Bu dengesizlik, `other_vehicle` sınıfında küçük nesne başarımının (`AP_small@50-95`) YOLOv8'de `0.0000`, RT-DETR'da ise `0.0667` seviyesinde kalmasına neden olmuştur.
+4. **Mimari Hesaplama Maliyeti ve Donanım Kısıtları (RT-DETR vs. YOLOv8):** RT-DETR, küresel öz-dikkat (self-attention) mekanizması ve NMS-free (Non-Maximum Suppression gerektirmeyen) uçtan uca yapısı sayesinde küçük nesne konumlandırmada (`AP_small@50-95` farkı `+%8.15`) açık ara üstünlük sağlasa da, encoder/decoder dikkat katmanlarının bellek bant genişliği ve FLOPs gereksinimi YOLOv8'e kıyasla daha yüksektir. Dolayısıyla yüksek işlem kapasiteli yer istasyonlarında RT-DETR en yüksek doğruluğu sunarken, güç ve VRAM bütçesi kısıtlı gömülü İHA uçuş bilgisayarlarında (ör. NVIDIA Jetson Nano/Orin) gerçek zamanlı FPS gereksinimleri için YOLOv8 daha hafif bir alternatif oluşturmaktadır.
