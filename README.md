@@ -140,7 +140,7 @@ Nesne tespit modellerinden alınan ham çıktıları operatör dostu Türkçe du
 | 4 | `drone` | 383 | 253 | 0.9575 | 0.6589 | 0.9407 | 0.5795 |
 | 5 | `mine` | 183 | 79 | 0.9949 | 0.6316 | 1.0000 | 0.5999 |
 
-> **YOLOv8 Değerlendirme Notu:** Sızıntı öncesi (ardışık kare ezberli) dağılımda `%93.66` olan `mAP@50` değeri, sızıntılar tamamen temizlendikten sonra gerçek genelleme performansını yansıtarak `%89.70` olarak gerçekleşmiştir. Ana sınıfların (`person`, `car`, `drone`, `mine`) tamamı `%95.7–%99.5` bandında yüksek başarım sergilerken, `other_vehicle` sınıfındaki düşük skor test kümesindeki örnek azlığından (`n=19`) kaynaklanmaktadır.
+> **YOLOv8 Değerlendirme Notu:** Sızıntı öncesi (ardışık kare ezberli) dağılımda `%94,1` olan `mAP@50` değeri, sızıntılar tamamen temizlendikten sonra gerçek genelleme performansını yansıtarak `%89.70` olarak gerçekleşmiştir. Ana sınıfların (`person`, `car`, `drone`, `mine`) tamamı `%95.7–%99.5` bandında yüksek başarım sergilerken, `other_vehicle` sınıfındaki düşük skor test kümesindeki örnek azlığından (`n=19`) kaynaklanmaktadır.
 
 #### YOLOv8 — Test Kümesinden Seçilen 20 Örnek Tespit ve Durum Raporları
 
