@@ -65,7 +65,7 @@ Bu proje; İnsansız Hava Araçlarından (İHA) alınan termal görüntülerde k
 
 ## 1. Veri Seti ve Kümeler
 
-Başlangıçtaki birleştirilmiş açık kaynak veri setinde (`umuttuygurr/aerial-uav-thermal-inferred-unified-dataset`) yer alan **27.925** görüntü içerisinden, `gun` (ID: 6) sınıfına ait **1.839** görüntü çıkarılmıştır (`excluded_gun`). Bu görüntülerin tamamı `06_gundataset` kaynağındandır (orijinal bölmedeki dağılımları: `train` 1.471, `val` 181, `test` 187; kaynağın `gun` etiketi taşımayan kalan 61 görüntüsü veri setinde tutulmuştur). Çıkarma gerekçesi yazarın gözlemidir: `gun` sınıfı orijinal test bölmesinde yalnızca 187 görselle (%6.68) temsil edildiğinden sınıf bazlı AP'nin kararsız kaldığı ve genel `mAP@50` ortalamasını düşürdüğü görülmüştür; gun sınıfını içeren sızıntısız eğitim tamamlanmadan durdurulmuş, sızıntısız bölmede tam bir eğitim ve test ölçümü yapılmamıştır. Kalan **26.086** aktif görüntü (`train`: 20.092, `val`: 3.020, `test`: 2.974) ve **86.770** etiket, 6 hedef sınıf üzerinden analiz edilmiştir.
+Başlangıçtaki birleştirilmiş açık kaynak veri setinde (`umuttuygurr/aerial-uav-thermal-inferred-unified-dataset`) yer alan **27.925** görüntü içerisinden, `gun` (ID: 6) sınıfına ait **1.839** görüntü çıkarılmıştır (`excluded_gun`). Bu görüntülerin tamamı `06_gundataset` kaynağındandır (orijinal bölmedeki dağılımları: `train` 1.471, `val` 181, `test` 187; kaynağın `gun` etiketi taşımayan kalan 61 görüntüsü veri setinde tutulmuştur). Çıkarma gerekçesi yazarın gözlemidir: `gun` sınıfı orijinal test bölmesinde yalnızca 187 görselle (%6.68) temsil edildiğinden sınıf bazlı AP'nin kararsız kaldığı ve genel `mAP@50` ortalamasını düşürdüğü görülmüştür; `gun` sınıfını içeren sızıntısız eğitim tamamlanmadan durdurulmuş, sızıntısız bölmede tam bir eğitim ve test ölçümü yapılmamıştır. Kalan **26.086** aktif görüntü (`train`: 20.092, `val`: 3.020, `test`: 2.974) ve **86.770** etiket, 6 hedef sınıf üzerinden analiz edilmiştir.
 
 #### `gun` Sınıfının Çıkarılma Gerekçesi (Ayrıntı)
 
@@ -366,7 +366,7 @@ Bağımsız test kümesi (`2974 görüntü`, `9611 nesne`) ve örnek çıktılar
 | Optimizer | AdamW (Ultralytics otomatik seçimi), lr = 0.001 | AdamW (Ultralytics otomatik seçimi), lr = 0.001 |
 | Veri artırma | Ultralytics varsayılanları (mosaic 1.0, yatay çevirme 0.5, HSV, randaugment, erasing 0.4) | Ultralytics varsayılanları (mosaic 1.0, yatay çevirme 0.5, HSV, randaugment, erasing 0.4) |
 | Seed / deterministic | `seed=42`, `deterministic=True` | `seed=42`, `deterministic=False` (bazı CUDA işlemleri deterministik değil) |
-| Test protokolü | `imgsz=640`, `conf=0.001`, `iou=0.7`, `max_det=300`, `batch=16` | `imgsz=640`, `conf=0.001`, `iou=0.7` (NMS kullanılmadığı için etkisiz), `max_det=300`, `batch=4`, `half=True` |
+| Test protokolü | `imgsz=640`, `conf=0.001`, `iou=0.7`, `max_det=300`, `batch=16` (`half` belirtilmemiş) | `imgsz=640`, `conf=0.001`, `iou=0.7` (NMS kullanılmadığı için etkisiz), `max_det=300`, `batch=4`, `half=True` |
 | Küçük nesne tanımı | COCO alan ≤ 1024 px², `maxDets=300` | COCO alan ≤ 1024 px², `maxDets=300` |
 | Güven eşiği (görselleştirme) | `conf >= 0.25` | `conf >= 0.25` |
 | Metrik kaynakları | `ultralytics` (mAP), `pycocotools` (AP_small, çapraz kontrol) | `ultralytics` (mAP), `pycocotools` (AP_small, çapraz kontrol) |
